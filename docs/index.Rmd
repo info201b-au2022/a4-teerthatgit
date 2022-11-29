@@ -1,7 +1,7 @@
 ---
-title: "Your A4 Report Title (TODO: Revise title)"
-author: "Your Name"
-date: '2022-11-01'
+title: "Growing Incarceration Inequities based on Urbanicity"
+author: "Teerth Mehta"
+date: '2022-11-27'
 output: html_document
 ---
 
@@ -11,35 +11,132 @@ source("../source/analysis.R")
 ```
 
 ## Abstract 
-[TODO: Include a short abstract (about 50 words)]
-
-# Test (TODO: Remove before submission!!)
-```{r echo=FALSE}
-q1_string <- test_query1()
-num <- 5
-```
-As you know, this is a markdown report. The [R Markdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) is **useful!**
-
-* Here's a test of a dynamic variable. Say **"`r q1_string`!!!** 
-* Here's another test. A vector
-of numbers: `r test_query2(num)`.
-
-Recall that _{r echo=TRUE}_ can be used to display the code, 
-which is very useful when developing and debugging a report. Here's an example: 
-
-```{r echo=TRUE}
-num <- 5
-sum <- sum(test_query2(num))
-print(sum)
-```
+This report analyzes the various disparities in criminal justice
+resources distributed across counties with disparate characteristics,
+specifically urbanicity. It is shown that rural counties have borne a lot of the
+recent effects of mass incarceration, and have seen the most growth in 
+incarcerated population since 1970. In addition, some rural states also
+relied heavily on pretrial incarcerations, while jail capacities have not increased.
+This shows us that the distribution of criminal justice resources are distributed
+inequitably across rural and more urban regions. All of these patterns may show 
+inequities in criminal justice reform resources in rural states and regions.
 
 ## Introduction 
-[TODO]
+Often rural areas tend to get overlooked in American discourse in regards
+to the crisis of mass incarceration. Yet, recently a large proportion of the
+growth in this crisis comes from smaller sized counties (i.e. rural and small
+counties) where criminal justice resources such as diversion programs are far
+and few between. Furthermore, because law enforcement resources such as judges 
+are also stretched in rural areas, one would see other aspects of
+mass incarceration in rural areas manifest as a high amount of 
+pretrial incarcerations, or incarcerations which await trials.
+As such, this project is a practice in the _Analysis_ stage
+of the process of challenging power in Data Feminism, where I use data to expose
+inequities in the structure of criminal justice between rural and urban areas
+in the country in a more clear manner than may have previously been seen. Given
+this information, the direct stakeholders of this report may be policy-makers
+at various levels of government and advocates of criminal justice reform who 
+push for policies that aim to mitigate and eventually end mass incarceration.
+Thus, they may use this data to show and inform future policy positions such
+that they take into account the large impact that rural incarceration has been
+recently playing in the overall crisis and hopefully decrease the future impact
+on rural areas of this awful crisis. In turn, the indirect stakeholders are
+those who have been impacted or touched by the criminal justice system,
+specifically those who live or are incarcerated in more sparsely populated 
+areas, counties, and states and those who will be impacted by the policies that 
+this report may inspire. To this end, I answer some questions such as: 
+how do increases in jail capacity correlate with pretrial incarceration and
+- Where do these incarcerations happen to be geographically?
+- What trends do predominantly rural states experience in incarceration 
+over time? 
+- What type of urbanicity experiences the highest incarceration rates?
+- What types of counties have fueled the mass incarceration crisis the
+most since 1970?
 
 ## Data Summary 
-[TODO]
+Given that this report is about disparities in mass incarceration
+over different types of urbanicities, I began by looking at the difference
+between jail capacities and jail populations over the entire urbanicities.
+It was clear that small and medium sized counties had the greatest difference
+with a difference of `r format(round(small_jail_capacity_difference), scientific = FALSE)`
+open prisoner spots and the smallest difference was seen in suburban counties 
+had the smallest difference with a difference of `r format(round(suburb_jail_capacity_difference), scientific = FALSE)` open prisoner spots.
+This larger difference in much less populated counties shows us that there 
+is an unnecessarily large reliance on incarceration as a tool of justice, 
+and this shows the pattern of inequity that there are a lack of alternatives
+to incarceration in these counties. This inequity is further shown through the 
+fact that the average incarceration rate in rural counties is higher at 
+`r round(rural_incarceration_rate)` and in urban counties it is lower at `r round(urban_incarceration_rate)`. 
+We see that for some reason rural communities tend to incarcerate their own 
+residents at higher rates than urban communities and any other communities
+for that matter. Finally, we see the same trends in pretrial incarceration,
+where smaller counties tend to put more people in pretrial incarceration. This
+may be due to, again, the fact that smaller counties may not have the resources
+to keep people out incarceration. As such, smaller and mid-sized counties have
+the most pretrial incarcerations at `r format(round(small_pretrial), scientific = FALSE)` 
+prisoners and suburban counties which may have the more resources to have pretrial 
+incarcerations at `r format(round(suburban_pretrial), scientific = FALSE)` 
+prisoners.
 
-[TODO ... other sections ... See Canvas for details]
+## Growth of the U.S. Prison Population
+```{r, fig.width=10, fig.height=4, echo=FALSE, fig.cap="Increase of Jail Population in U.S.: Presenting the trend of the incarcerated population in the US from 1970 to 2018 through a bar chart."}
+plot_jail_pop_for_us()
+```
+One can see the clear trend of increasing overall incarcerations since 1970 and
+up till 2009. Since 2009, the trend of overall incarceration has plateaued and
+has began to decrease by almost 50,000 prisoners into 2018. Furthermore, one
+can also see that the greatest increase in incarceration began in 1980 and
+ending around 2000.
 
-_All the very best with your work!_
+## Growth of Prison Population by State
+```{r, fig.width=10, fig.height=4, echo=FALSE, fig.cap="Increase of Jail Population in Rural U.S. states: Presenting the trend of the incarcerated population in the 7 most rural U.S. states from 1970 to 2018 through a line chart."}
+plot_jail_pop_by_state(top_rural_state(7))
+```
+The graph shows a trend of increasing incarceration in rural states since 1970
+and we see that the most rural state Alaska had the most dramatic increase in
+the incarcerated population starting in 1990 and ending around 2005. However,
+the increase in all the the other rural states is no where near as dramatic and
+this partially maybe due to the fact that rural states have lower populations
+and thus a better graph maybe that of comparing proportions of the incarcerated
+population. The reason that these specific states were chosen was because the
+overall mission of this report is to uncover inequities in rural incarceration.
+The states were classified as rural based on the proportion of rural counties
+in each state. One clear question that this graph helps answer is: How have
+rural states experienced increases in incarceration over the time span of 1970
+to 2018.
 
+## Inequities Present in Population Growth of Counties and their Prisons
+```{r, fig.width=10, fig.height=4, echo=FALSE, fig.cap="Inequities Present in Population Growth of Counties and their Prisons: Using ratios to quantify growth and plot in scatter plots the relationship between growth in regular populations and incarcerated populations in different urbanities"}
+plot_pop_growth_rate()
+```
+This scatterplot shows how the population growth of different counties and
+the prison population growth of the prisons on those different counties between
+1970 and 2018, as expressed in ratios of populations in 2018 to populations in
+1970, are related. Each dot is a county, and the color of each dot is in
+reference to its urbanicity. The clear pattern that comes across is the fact that
+though rural counties have not seen much overall growth in population, their
+prison populations have had the most growth since 1970. This shows us that rural
+counties have produced the greatest increase in mass incarceration since 1970.
+One question this graph answers is: which urbanicity has fueled the most growth
+in mass incarceration since 1970? The concise answer to that question is rural
+urbanicities and this is particularly troubling because there is not an equal
+increase in general county populations.
+
+## Geographical Inequities Present in Pretrial Populations and the Increase in Jail Capacity by State
+```{r, fig.width=10, fig.height=4, echo=FALSE, fig.cap="Geographical Inequities Present in Pretrial Populations and the Increase in Jail Capacity by State: Using ratios to quantify growth of pretrial incarceration, jail capacity increases, and geographical location"}
+plot_ratio_pretrial()
+plot_ratio_capacity()
+```
+These two maps show us the disparities between the increase in jail capacity and pretrial incarcerations. What one can see is that often rural states in the Midwest (i.e. North Dakota, Wisconsin) tend to see the greatest increase in pretrial incarcerations since 1970
+while increase in jail capacities do not necessarily fully follow the same pattern
+and in many cases are related in the opposite direction. What these trends show us
+is that criminal justice reforms and resources are not equitably distributed across
+the United States, where rural areas suffer the brunt of this inequity. This is evidenced
+by a lack of jail capacity in rural areas compared to an increased number of pretrial
+incarcerations as a symptom of a lack of pretrial diversions or criminal justice
+staff to evaluate cases right away. One question that can be answered by this
+graph is: what are the geographical distributions of criminal justice resources
+in the US? The concise answer to this question is that rural Midwestern states
+have seen a greater growth in pretrial incarcerations in response to a slower
+rate of increase in criminal justice resources, one symptom being a lower
+increase in jail capacity.

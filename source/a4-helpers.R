@@ -5,17 +5,17 @@ library(tidyverse)
 # This function returns the incarceration data as a dataframe
 # Note: The CSV file is stored on my local machine to speed load times
 #---------------------------------------------------------------------------#
-get_data <- function(num_records=-1) {
-  fname <- "~/Documents/info201/data/incarceration_trends.csv"
-  df <- read.csv(fname, nrows=num_records)
+get_data <- function(num_records = -1) {
+  fname <- "../data/incarceration_trends.csv"
+  df <- read.csv(fname, nrows = num_records)
   return(df)
 }
 
 # Processing places ----
-# NOTE: For these functions to work, the dataframe `incarceration_df` must 
+# NOTE: For these functions to work, the dataframe `incarceration_df` must
 #       be initialized
 #----------------------------------------------------------------------------#
-# Return the list of states in a region.  The regions are: 
+# Return the list of states in a region.  The regions are:
 #    Midwest, Northeast, South, West
 #----------------------------------------------------------------------------#
 states_in_region <- function(p_region) {
@@ -27,7 +27,7 @@ states_in_region <- function(p_region) {
 }
 
 #----------------------------------------------------------------------------#
-# Return the list of divisions in a region. The regions are: 
+# Return the list of divisions in a region. The regions are:
 # Midwest, Northeast, South, West
 #----------------------------------------------------------------------------#
 divisions_in_region <- function(p_region) {
@@ -39,7 +39,7 @@ divisions_in_region <- function(p_region) {
 }
 
 #----------------------------------------------------------------------------#
-# Return the list of states in a region.  The divisions are: 
+# Return the list of states in a region.  The divisions are:
 #    East North Central
 #    East South Central
 #    Middle Atlantic
@@ -59,7 +59,7 @@ states_in_division <- function(p_division) {
 }
 
 #----------------------------------------------------------------------------#
-# Returns TRUE if the place is a state 
+# Returns TRUE if the place is a state
 #----------------------------------------------------------------------------#
 is_state <- function(p_place) {
   the_states <- incarceration_df %>%
@@ -68,10 +68,32 @@ is_state <- function(p_place) {
     pull(state)
   if (length(the_states > 0)) {
     return(TRUE)
-  }
-  else {
+  } else {
     return(FALSE)
   }
+}
+
+#----------------------------------------------------------------------------#
+# Returns a vector of a given top number of rural states, states where 50% or
+# more of counties in 2018 are classified as rural
+#----------------------------------------------------------------------------#
+top_rural_state <- function(number_state) {
+  total_counties <- incarceration_df %>%
+    filter(year == max(year)) %>%
+    group_by(state) %>%
+    summarise(total_counties_count = n())
+
+  rural_counties <- incarceration_df %>%
+    filter(year == max(year)) %>%
+    filter(urbanicity == "rural") %>%
+    group_by(state) %>%
+    summarise(rural_counties_count = n())
+
+  prop_rural <- left_join(total_counties, rural_counties) %>%
+    replace_na(list(0)) %>%
+    mutate(prop = rural_counties_count / total_counties_count)
+  min_values <- head(sort(prop_rural$prop, decreasing = TRUE), n = number_state)
+  return(subset(prop_rural, prop %in% min_values)$state)
 }
 
 #----------------------------------------------------------------------------#
@@ -84,12 +106,11 @@ states_in_region_or_division <- function(place) {
     states <- states_in_region(place)
   } else {
     states <- states_in_division(place)
-    if (length(states)==0) {
-      if(is_state(place)) {
+    if (length(states) == 0) {
+      if (is_state(place)) {
         return(c(place))
-      }
-      else {
-        stop(paste0("Invalid place name (\"",place, "\")"))
+      } else {
+        stop(paste0("Invalid place name (\"", place, "\")"))
       }
     }
   }
@@ -118,7 +139,7 @@ format_region_info <- function(region) {
   t <- ""
   t <- paste0(t, "  in '", region, "': ")
   d <- divisions_in_region(region)
-  t_divisions <-  paste0(d, collapse = " | ")
+  t_divisions <- paste0(d, collapse = " | ")
   t <- paste0(t, t_divisions)
   return(t)
 }
@@ -134,37 +155,37 @@ get_basic_info <- function(df) {
   t <- paste0(t, "  No. counties              ", length(unique(df$county_name)), "\n")
   t <- paste0(t, "  No. fips (county IDs)     ", length(unique(df$fips)), "\n")
   t <- paste0(t, "  No. different urbanicity  ", length(unique(df$urbanicity)), "\n")
-  
+
   t <- paste0(t, "Divisions ...\n")
   t <- paste0(t, format_region_info("Midwest"), "\n")
   t <- paste0(t, format_region_info("Northeast"), "\n")
   t <- paste0(t, format_region_info("South"), "\n")
   t <- paste0(t, format_region_info("West"), "\n")
-  
-  cat(t) 
+
+  cat(t)
 }
 
 # Main ----
 #----------------------------------------------------------------------------#
 # Basic tests of the helper functions
-# Comment or uncomment 
+# Comment or uncomment
 #----------------------------------------------------------------------------#
 # ## Very important: You must initialize `incarceration_df`
 # incarceration_df <- get_data()
-# 
+#
 # ## Demonstrate use of the functions
 # ## Each of these functions returns a vector of states
 # states_in_region("South")
 # states_in_division("Pacific")
-# states_in_region_or_division("South")        
-# states_in_region_or_division("Mountain")  
+# states_in_region_or_division("South")
+# states_in_region_or_division("Mountain")
 # states_in_region_or_division("OR")          # returns c("OR")
-# 
-# ## Returns the divisions that makeup a region 
+#
+# ## Returns the divisions that makeup a region
 # divisions_in_region("West")
-# 
+#
 # ## Returns basic information about the dataset
 # get_basic_info(incarceration_df)
-# 
-# ## 
+#
+# ##
 # states_with_no_jail_pop()
